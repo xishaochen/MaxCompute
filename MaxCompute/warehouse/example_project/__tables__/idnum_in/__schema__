@@ -1,0 +1,3 @@
+project=example_project
+table=idnum_in
+columns=id1:STRING,id2:STRING

@@ -1,0 +1,3 @@
+project=linan_jiwei_jianguan
+table=temp_dwd_fdcxx_dd
+columns=name:STRING,id_card:STRING,qlbsm:DOUBLE,bdcqzh:STRING,qlr:STRING,gyqk:STRING,zl:STRING,qllx:STRING,qlxz:STRING,yt:STRING,szsj:DATETIME,bdcdyh:STRING

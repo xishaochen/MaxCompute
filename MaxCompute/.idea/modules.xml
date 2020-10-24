@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/FunctionStudio/FunctionStudio.iml" filepath="$PROJECT_DIR$/FunctionStudio/FunctionStudio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MaxCompute.iml" filepath="$PROJECT_DIR$/MaxCompute.iml" />
+    </modules>
+  </component>
+</project>
