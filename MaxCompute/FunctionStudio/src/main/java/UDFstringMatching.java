@@ -1,19 +1,34 @@
 import com.aliyun.odps.udf.UDF;
-import com.hankcs.hanlp.dependency.nnparser.util.math;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.tokenizer.StandardTokenizer;
 
 import java.util.*;
 
-
 public class UDFstringMatching extends UDF {
     // TODO define parameters and return type, e.g:  public String evaluate(String a, String b)
-    public Double evaluate(String a,String b) {
+    public String evaluate(String a, String b, String c, String d, String f) {
+
+        int weight = Integer.parseInt(f);
         //HashMap用于存储两个分词的向量
         HashMap<String, Integer> leftHash = new HashMap<>();
         HashMap<String, Integer> rightHash = new HashMap<>();
         Set<String> All = new HashSet<>();
 
+        //停用词
+        List ignore = new ArrayList();
+        for (String s : c.split("#")) {
+            ignore.add(s);
+        }
+
+        //权重词
+        List weighting = new ArrayList();
+        for (String s : d.split("#")) {
+            weighting.add(s);
+        }
+
+        //删除所有标点符号
+        a = a.replaceAll("\\p{Punct}", "");
+        b = b.replaceAll("\\p{Punct}", "");
 
         List<Term> left = StandardTokenizer.segment(a);
         List<Term> right = StandardTokenizer.segment(b);
@@ -30,29 +45,44 @@ public class UDFstringMatching extends UDF {
         }
         //将left和right的集合转换为hash结构
         for (String s : All) {
-            if (leftList.contains(s)) {
+            if (leftList.contains(s) && !ignore.contains(s)) {
                 if (!leftHash.containsKey(s)) {
-                    leftHash.put(s,1);
+                    if (weighting.contains(s)) {
+                        leftHash.put(s, weight);
+                    } else {
+                        leftHash.put(s, 1);
+                    }
                 } else {
-                    leftHash.put(s,leftHash.get(s) + 1);
+                    if (weighting.contains(s)) {
+                        leftHash.put(s, rightHash.get(s) + weight);
+                    } else {
+                        leftHash.put(s, rightHash.get(s) + 1);
+                    }
                 }
             } else {
-                leftHash.put(s,0);
+                leftHash.put(s, 0);
             }
         }
 
         for (String s : All) {
-            if (rightList.contains(s)) {
+            if (rightList.contains(s) && !ignore.contains(s)) {
                 if (!rightHash.containsKey(s)) {
-                    rightHash.put(s,1);
+                    if (weighting.contains(s)) {
+                        rightHash.put(s, weight);
+                    } else {
+                        rightHash.put(s, 1);
+                    }
                 } else {
-                    rightHash.put(s,rightHash.get(s) + 1);
+                    if (weighting.contains(s)) {
+                        rightHash.put(s, rightHash.get(s) + weight);
+                    } else {
+                        rightHash.put(s, rightHash.get(s) + 1);
+                    }
                 }
             } else {
-                rightHash.put(s,0);
+                rightHash.put(s, 0);
             }
         }
-
         //获取left和right数据转换为的向量
         List<Integer> leftArr = new ArrayList();
         Iterator<Integer> leftIter = leftHash.values().iterator();
@@ -76,12 +106,13 @@ public class UDFstringMatching extends UDF {
         double leftdenominator = 0;
         double rightdenominator = 0;
         for (int i = 0; i < leftArr.size(); i++) {
-            leftdenominator += Math.pow(leftArr.get(i),2);
-            rightdenominator += Math.pow(rightArr.get(i),2);
+            leftdenominator += Math.pow(leftArr.get(i), 2);
+            rightdenominator += Math.pow(rightArr.get(i), 2);
         }
+        double result = sum / (Math.sqrt(leftdenominator) * Math.sqrt(rightdenominator));
 
-        return sum / (Math.sqrt(leftdenominator) * Math.sqrt(rightdenominator));
-
+        //保留3位小数
+        return String.format("%.3f", result);
     }
 
 }
