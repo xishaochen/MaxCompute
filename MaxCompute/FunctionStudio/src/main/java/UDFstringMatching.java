@@ -27,8 +27,8 @@ public class UDFstringMatching extends UDF {
         }
 
         //删除所有标点符号
-        a = a.replaceAll("\\p{Punct}", "");
-        b = b.replaceAll("\\p{Punct}", "");
+        a = a.replaceAll("\\pP+ ?", "");
+        b = b.replaceAll("\\pP+ ?", "");
 
         List<Term> left = StandardTokenizer.segment(a);
         List<Term> right = StandardTokenizer.segment(b);
