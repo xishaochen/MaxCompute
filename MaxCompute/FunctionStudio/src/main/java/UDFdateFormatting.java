@@ -11,7 +11,7 @@ public class UDFdateFormatting extends UDF {
 
         //判断字符串是否存在非数字字符
         if (!replaceDate.matches("[0-9]+")) {
-            if (split.length > 3 || split.length < 1) {
+            if (split.length > 3 || split.length < 1 || split[0] == "") {
                 return null;
             } else if (split.length == 1 && split[0] != "") {
                 result = split[0] + "-01-01";
