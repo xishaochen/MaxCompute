@@ -56,7 +56,7 @@ public class UDFstringEncry extends UDF {
         System.out.println(encryptionUDF.evaluate("362204199408305619"));
         System.out.println(encryptionUDF.evaluate("362204199408305618"));
         System.out.println(encryptionUDF.evaluate("362204199508305618"));
-        System.out.println(encryptionUDF.evaluate("借用百度出来的最短例程："));
+        System.out.println(encryptionUDF.evaluate("借用百度出来的："));
     }
 
 }
