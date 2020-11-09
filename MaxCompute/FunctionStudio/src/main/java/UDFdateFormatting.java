@@ -1,17 +1,24 @@
 import com.aliyun.odps.udf.UDF;
 
 public class UDFdateFormatting extends UDF {
+    public static String result = "";
+
     // TODO define parameters and return type, e.g:  public String evaluate(String a, String b)
     public String evaluate(String dateStr) {
+
+        //处理空值
+        if (dateStr == null) {
+            return result;
+        }
 
         //轻度清洗，去除中文
         String replaceDate = dateStr.replaceAll("[^0-9]", "-");
         String[] split = replaceDate.split("-");
-        String result = "";
+
 
         //判断字符串是否存在非数字字符
         if (!replaceDate.matches("[0-9]+")) {
-            if (split.length > 3 || split.length < 1 || split[0] == "") {
+            if (split.length > 3 || split.length < 1 || split[0].length() < 4) {
                 return null;
             } else if (split.length == 1 && split[0] != "") {
                 result = split[0] + "-01-01";
@@ -23,7 +30,7 @@ public class UDFdateFormatting extends UDF {
                         result = split[0] + "-" + split[1] + "-01";
                     }
                 } else {
-                    return null;
+                    return result;
                 }
             } else {
                 if (split[0].length() == 4 && split[1].length() != 0 && split[2].length() != 0) {
@@ -41,7 +48,7 @@ public class UDFdateFormatting extends UDF {
                         }
                     }
                 } else {
-                    return null;
+                    return result;
                 }
             }
         } else { //纯数字类型的日期字段格式化
@@ -61,7 +68,7 @@ public class UDFdateFormatting extends UDF {
             } else if (date.length() == 8) {
                 result = result = date.substring(0,4) + "-" + date.substring(4,6) + "-" + date.substring(6,8);
             } else {
-                return null;
+                return result;
             }
         }
         return result;
