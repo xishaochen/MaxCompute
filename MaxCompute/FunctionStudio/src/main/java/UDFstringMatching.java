@@ -8,6 +8,10 @@ public class UDFstringMatching extends UDF {
     // TODO define parameters and return type, e.g:  public String evaluate(String a, String b)
     public String evaluate(String a, String b, String c, String d, String f) {
 
+        if (a == null || b == null || c == null || d == null || f == null) {
+            return "";
+        }
+
         int weight = Integer.parseInt(f);
         //HashMap用于存储两个分词的向量
         HashMap<String, Integer> leftHash = new HashMap<>();
@@ -27,8 +31,8 @@ public class UDFstringMatching extends UDF {
         }
 
         //删除所有标点符号
-        a = a.replaceAll("\\p{Punct}", "");
-        b = b.replaceAll("\\p{Punct}", "");
+        a = a.replaceAll("[\\pP ]", "");
+        b = b.replaceAll("[\\pP ]", "");
 
         List<Term> left = StandardTokenizer.segment(a);
         List<Term> right = StandardTokenizer.segment(b);
