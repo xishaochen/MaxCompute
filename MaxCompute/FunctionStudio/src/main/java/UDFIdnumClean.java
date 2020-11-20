@@ -41,8 +41,9 @@ public class UDFIdnumClean extends UDF {
         if (NEW_CARD_NUMBER_LENGTH == cardNumber.length()) {
             if (isNumeric(cardNumber.substring(0, 17)) == false) {return null;} // 前17位为数值
             if (UDFIdnumClean.calculateVerifyCode(cardNumber) != cardNumber.charAt(17)) {
-                cardNumber = contertToNewCardNumber(cardNumber,NEW_CARD_NUMBER_LENGTH);
-            }// 校验位修正
+                cardNumber = "0@"+cardNumber; // 校验位不匹配需要打上标记
+//                cardNumber = contertToNewCardNumber(cardNumber,NEW_CARD_NUMBER_LENGTH);
+            }
             if (isProvince(cardNumber.substring(0, 2)) == false) {return null;}// 省份编码在已知集合中
             if (isDate(cardNumber.substring(6, 14)) == false) {return null;}// 非法日期转换前后不一致
             int birthdayYear = Integer.parseInt(cardNumber.substring(6, 10));
