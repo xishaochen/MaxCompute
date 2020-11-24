@@ -7,6 +7,15 @@ public class UDFidMatching extends UDF {
 
     public String evaluate(String a,String b) {
     // TODO define parameters and return type, e.g:  public String evaluate(String a, String b)
+        //处理空值以及null
+        if (a == null || b== null) {
+            return "";
+        }
+
+        if (a.length() < 1 || b.length() < 1) {
+            return "";
+        }
+
         char[] left = a.toCharArray();
         char[] right = b.toCharArray();
         double maxLen = Math.max(left.length, right.length);
