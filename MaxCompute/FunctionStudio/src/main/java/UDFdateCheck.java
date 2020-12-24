@@ -17,6 +17,7 @@ public class UDFdateCheck extends UDF {
      * @param day int
      * @return String
      */
+    private String result = "";
     private String dateFormat(int year,int month,int day) {
         if (year <1900 || month > 12 || day > 31) {
             return "12@" + year + "-" + month + "-" + day;
@@ -48,21 +49,27 @@ public class UDFdateCheck extends UDF {
         }
 
         //判断字符串是否存在非数字字符
-        if (!replaceDate.matches("[0-9]+")) {
-            if (split.length == 3) {
-                int year = Integer.parseInt(split[0]);
-                int month = Integer.parseInt(split[1]);
-                int day = Integer.parseInt(split[2]);
-                return dateFormat(year,month,day);
-            }
-            return "12@" + s;
+        if (!replaceDate.matches("[0-9]+") && split.length == 3) {
+            int year = Integer.parseInt(split[0]);
+            int month = Integer.parseInt(split[1]);
+            int day = Integer.parseInt(split[2]);
+            result = dateFormat(year,month,day);
         }
         if (split.length == 1 && split[0].length() == 8){ //纯数字类型的日期字段格式化
             int year = Integer.parseInt(split[0].substring(0,4));
             int month = Integer.parseInt(split[0].substring(4,6));
             int day = Integer.parseInt(split[0].substring(6,8));
-            return dateFormat(year,month,day);
+            result = dateFormat(year,month,day);
         }
+
+        //校验清洗后的日期正则
+        String sString="(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})(((0[13578]|1[02])(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)(0[1-9]|[12][0-9]|30))|(02(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))0229)";
+
+        if (result.replaceAll("-","").matches(sString)) {
+            System.out.println("yes");
+            return result;
+        }
+
         return "12@" + s;
     }
 }
