@@ -34,7 +34,7 @@ public class UDFidnumCheck extends UDF {
             return "";
         }// 为NULL
 
-        if (cardNumber.substring(0,cardNumber.length() - 1).matches("^[0-9]+")) {
+        if (cardNumber.substring(0,cardNumber.length() - 1).matches("[^0-9]+")) {
             return "18@" + cardNumber;
         }
 
@@ -47,10 +47,10 @@ public class UDFidnumCheck extends UDF {
         }// 长度不正确
         if (NEW_CARD_NUMBER_LENGTH == cardNumber.length()) {
             if (isNumeric(cardNumber.substring(0, 17))) {
-                return null;
+                return "18@" + cardNumber;
             } // 前17位为数值
             if (calculateVerifyCode(cardNumber) != cardNumber.charAt(17)) {
-                cardNumber = "18@" + cardNumber; // 校验位不匹配需要打上标记
+                return "18@" + cardNumber; // 校验位不匹配需要打上标记
 //                cardNumber = contertToNewCardNumber(cardNumber,NEW_CARD_NUMBER_LENGTH);
             }
             if (isProvince(cardNumber.substring(0, 2))) {
