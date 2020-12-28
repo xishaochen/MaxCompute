@@ -10,14 +10,6 @@ import com.aliyun.odps.udf.UDF;
  */
 public class UDFdateCheck extends UDF {
 
-    /**
-     *
-     * @param year int
-     * @param month int
-     * @param day int
-     * @return String
-     */
-    private String result = "";
     private String dateFormat(int year,int month,int day) {
         if (year <1900 || month > 12 || day > 31) {
             return "12@" + year + "-" + month + "-" + day;
@@ -37,11 +29,25 @@ public class UDFdateCheck extends UDF {
     public String evaluate(String s) {
         //处理空值
         if (s == null || "".equals(s)) {
-            return "12@";
+            return null;
+        }
+
+        /**
+         *
+         * @param year int
+         * @param month int
+         * @param day int
+         * @return String
+         */
+        String result = "";
+        if (s.contains(" ")) {
+            result = s.split(" ")[0];
+        } else {
+            result = s;
         }
 
         //轻度清洗，去除中文
-        String replaceDate = s.replaceAll("[^0-9]+", "-");
+        String replaceDate = result.replaceAll("[^0-9]+", "-");
         String[] split = replaceDate.split("-");
 
         if (split.length > 3 || split[0].length() < 4 || Integer.parseInt(split[0].substring(0, 4)) < 1900) {
@@ -66,7 +72,6 @@ public class UDFdateCheck extends UDF {
         String sString="(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})(((0[13578]|1[02])(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)(0[1-9]|[12][0-9]|30))|(02(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))0229)";
 
         if (result.replaceAll("-","").matches(sString)) {
-            System.out.println("yes");
             return result;
         }
 
