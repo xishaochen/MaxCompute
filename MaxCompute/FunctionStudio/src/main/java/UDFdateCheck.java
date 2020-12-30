@@ -17,10 +17,10 @@ public class UDFdateCheck extends UDF {
         if (month < 10 && day < 10) {
             return year + "-0" + month + "-0" + day;
         }
-        if (month > 10 && day < 10) {
+        if (month >= 10 && day < 10) {
             return year + "-" + month + "-0" + day;
         }
-        if (month < 10 && day > 10) {
+        if (month < 10) {
             return year + "-0" + month + "-" + day;
         }
         return year + "-" + month + "-" + day;
@@ -28,34 +28,22 @@ public class UDFdateCheck extends UDF {
     // TODO define parameters and return type, e.g:  public String evaluate(String a, String b)
     public String evaluate(String s) {
         //处理空值
-        if (s == null || "".equals(s)) {
+        if (s == null || s.equals("")) {
             return null;
         }
 
-        /**
-         *
-         * @param year int
-         * @param month int
-         * @param day int
-         * @return String
-         */
-        String result = "";
-        if (s.contains(" ")) {
-            result = s.split(" ")[0];
-        } else {
-            result = s;
-        }
+        String result = s;
 
         //轻度清洗，去除中文
         String replaceDate = result.replaceAll("[^0-9]+", "-");
         String[] split = replaceDate.split("-");
 
-        if (split.length > 3 || split[0].length() < 4 || Integer.parseInt(split[0].substring(0, 4)) < 1900) {
+        if (split.length < 1 || split[0].length() < 4 || Integer.parseInt(split[0].substring(0, 4)) < 1900) {
             return "12@" + s;
         }
 
         //判断字符串是否存在非数字字符
-        if (!replaceDate.matches("[0-9]+") && split.length == 3) {
+        if (split.length >= 3 && !replaceDate.matches("[0-9]+")) {
             int year = Integer.parseInt(split[0]);
             int month = Integer.parseInt(split[1]);
             int day = Integer.parseInt(split[2]);

@@ -36,13 +36,16 @@ public class UDFIdnumClean extends UDF {
         int YEAR_END = Integer.parseInt(ft.format(dNow));
         cardNumber = cardNumber.trim();
         if (cardNumber.length() == 0) {return null;}// 空字符串
+
+        //校验身份证错误码
+
         if (NEW_CARD_NUMBER_LENGTH != cardNumber.length() &
                 OLD_CARD_NUMBER_LENGTH != cardNumber.length()) {return null;}// 长度不正确
+
         if (NEW_CARD_NUMBER_LENGTH == cardNumber.length()) {
             if (isNumeric(cardNumber.substring(0, 17)) == false) {return null;} // 前17位为数值
             if (UDFIdnumClean.calculateVerifyCode(cardNumber) != cardNumber.charAt(17)) {
-                cardNumber = "0@"+cardNumber; // 校验位不匹配需要打上标记
-//                cardNumber = contertToNewCardNumber(cardNumber,NEW_CARD_NUMBER_LENGTH);
+                cardNumber = contertToNewCardNumber(cardNumber,NEW_CARD_NUMBER_LENGTH);
             }
             if (isProvince(cardNumber.substring(0, 2)) == false) {return null;}// 省份编码在已知集合中
             if (isDate(cardNumber.substring(6, 14)) == false) {return null;}// 非法日期转换前后不一致

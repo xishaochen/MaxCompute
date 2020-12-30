@@ -1,11 +1,5 @@
-import com.aliyun.odps.data.Char;
 import com.aliyun.odps.udf.UDF;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 字符串清洗
@@ -46,8 +40,8 @@ public class UDFstringClean extends UDF {
     public String evaluate(String s) {
 
         //处理空值
-        if (s == null || s == "") {
-            return "";
+        if (s == null || s.equals("")) {
+            return null;
         }
 
         //将参数转换为数组
@@ -60,11 +54,20 @@ public class UDFstringClean extends UDF {
         for (char aChar : chars) {
             if (aChar >= SBC_CHAR_START && aChar <= SBC_CHAR_END) {
                 builder.append((char) (aChar - CONVERT_STEP));
-            } else if(aChar > 32){ //去除回车、制表符和空格等特殊字符
+            } else if(aChar == SBC_SPACE){ //去除回车、制表符和空格等特殊字符
+                builder.append(DBC_SPACE);
+            } else {
                 builder.append(aChar);
             }
         }
+        String result = builder.toString();
 
-        return builder.toString().toUpperCase();
+        //非datetime数据进行去空格
+        String sString="(\\d{2}|\\d{4})(?:-)?([0]{1}\\d{1}|[1]{1}[0-2]{1})(?:-)?([0-2]{1}\\d{1}|[3]{1}[0-1]{1})(?:\\s)?([0-1]{1}\\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\\d{1})(?::)?([0-5]{1}\\d{1}.0*)";
+        if (!result.matches(sString)) {
+            result = result.replaceAll(" ","");
+        }
+
+        return result.toUpperCase();
     }
 }
