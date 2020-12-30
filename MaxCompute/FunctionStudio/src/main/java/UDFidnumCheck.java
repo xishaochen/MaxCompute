@@ -31,8 +31,11 @@ public class UDFidnumCheck extends UDF {
     public String evaluate(String cardNumber) {
         //处理非法字符串
         if (cardNumber == null || cardNumber.equals("")) {
-            return "";
-        }// 为NULL
+            return null;
+        }
+
+        //清洗cardNumber
+        cardNumber = idNumClean(cardNumber);
 
         if (cardNumber.substring(0,cardNumber.length() - 1).matches("[^0-9]+")) {
             return "18@" + cardNumber;
@@ -88,6 +91,32 @@ public class UDFidnumCheck extends UDF {
             cardNumber = contertToNewCardNumber(cardNumber);
         }
         return cardNumber;
+    }
+
+    /**
+     * 简单清洗身份证号码
+     * @param cardNumber String
+     * @return String
+     */
+    private static String idNumClean(String cardNumber) {
+        String result;
+        if (!cardNumber.matches("[0-9.xX]+")) {
+            result = cardNumber.replaceAll("[^\\d-.-x-X]", "");
+        } else {
+            result = cardNumber;
+        }
+
+        int cardLen = result.replaceAll("\\.","").length();
+        int cardLength = result.split("\\.")[0].length();
+
+        if (cardLen == NEW_CARD_NUMBER_LENGTH || cardLen == OLD_CARD_NUMBER_LENGTH) {
+            return result.replaceAll("\\.","");
+        }
+
+        if (cardLength == NEW_CARD_NUMBER_LENGTH || cardLength == OLD_CARD_NUMBER_LENGTH) {
+            return result.split("\\.")[0];
+        }
+        return result;
     }
 
     /**
