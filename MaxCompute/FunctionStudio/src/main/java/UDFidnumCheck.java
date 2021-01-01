@@ -102,13 +102,13 @@ public class UDFidnumCheck extends UDF {
         String result;
 
         if (!cardNumber.matches("[0-9.xX]+")) {
-            result = cardNumber.replaceAll("[^\\d-.-x-X]", "");
+            result = cardNumber.replaceAll("[^\\d-.-x-X]", "").toUpperCase();
         } else {
-            result = cardNumber.replaceAll("[^\\dxX]", "");
+            result = cardNumber.replaceAll("[^\\dxX]", "").toUpperCase();
         }
 
         if (result.length() <= 0 || !result.substring(0,1).matches("[0-9]")) {
-            return result;
+            return result.toUpperCase();
         }
 
         int cardLen = result.replaceAll("\\.","").length();
