@@ -28,17 +28,17 @@ public class UDFidnumCheck extends UDF {
         return null;// 直接返回null
     });
 
-    public String evaluate(String cardNumber) {
+    public String evaluate(String cardNumbers) {
         //处理非法字符串
-        if (cardNumber == null || cardNumber.equals("")) {
+        if (cardNumbers == null || cardNumbers.equals("")) {
             return null;
         }
 
         //清洗cardNumber
-        cardNumber = idNumClean(cardNumber);
+        String cardNumber = idNumClean(cardNumbers);
 
-        if (cardNumber.substring(0,cardNumber.length() - 1).matches("[^0-9]+")) {
-            return "18@" + cardNumber;
+        if (cardNumber.length() == 0 || cardNumber.substring(0,cardNumber.length() - 1).matches("[^0-9]+")) {
+            return "18@" + cardNumbers;
         }
 
         Date dNow = new Date();
@@ -46,47 +46,47 @@ public class UDFidnumCheck extends UDF {
         int YEAR_END = Integer.parseInt(ft.format(dNow));
         if (NEW_CARD_NUMBER_LENGTH != cardNumber.length() &&
                 OLD_CARD_NUMBER_LENGTH != cardNumber.length()) {
-            return "18@" + cardNumber;
+            return "18@" + cardNumbers;
         }// 长度不正确
         if (NEW_CARD_NUMBER_LENGTH == cardNumber.length()) {
             if (isNumeric(cardNumber.substring(0, 17))) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             } // 前17位为数值
             if (calculateVerifyCode(cardNumber) != cardNumber.charAt(17)) {
-                return "18@" + cardNumber; // 校验位不匹配需要打上标记
+                return "18@" + cardNumbers; // 校验位不匹配需要打上标记
 //                cardNumber = contertToNewCardNumber(cardNumber,NEW_CARD_NUMBER_LENGTH);
             }
             if (isProvince(cardNumber.substring(0, 2))) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             }// 省份编码在已知集合中
             if (isDate(cardNumber.substring(6, 14))) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             }// 非法日期转换前后不一致
             int birthdayYear = Integer.parseInt(cardNumber.substring(6, 10));
             int birthdayMonth = Integer.parseInt(cardNumber.substring(10, 12));
             int birthday = Integer.parseInt(cardNumber.substring(12, 14));
             if (birthdayYear < YEAR_BEGIN) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             }
             if (birthdayYear > YEAR_END) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             }
             if (birthdayMonth > 12) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             }
             if (birthday > 31) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             }
         }
         if (OLD_CARD_NUMBER_LENGTH == cardNumber.length()) {
             if (isNumeric(cardNumber)) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             } // 前15位为数值
             if (isProvince(cardNumber.substring(0, 2))) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             }// 省份编码在已知集合中
             if (isDate("19" + cardNumber.substring(6, 12))) {
-                return "18@" + cardNumber;
+                return "18@" + cardNumbers;
             }// 非法日期转换前后不一致
             cardNumber = contertToNewCardNumber(cardNumber);
         }
@@ -100,10 +100,15 @@ public class UDFidnumCheck extends UDF {
      */
     private static String idNumClean(String cardNumber) {
         String result;
+
         if (!cardNumber.matches("[0-9.xX]+")) {
             result = cardNumber.replaceAll("[^\\d-.-x-X]", "");
         } else {
-            result = cardNumber;
+            result = cardNumber.replaceAll("[^\\dxX]", "");
+        }
+
+        if (result.length() <= 0 || !result.substring(0,1).matches("[0-9]")) {
+            return result;
         }
 
         int cardLen = result.replaceAll("\\.","").length();
@@ -176,8 +181,8 @@ public class UDFidnumCheck extends UDF {
      */
     private static boolean isProvince(String Province) {
         int prov = Integer.parseInt(Province);
-        for (int i = 0; i < PROVINCE_CODE.length; i++) {
-            if (PROVINCE_CODE[i] == prov) {
+        for (int j : PROVINCE_CODE) {
+            if (j == prov) {
                 return false;
             }
         }
