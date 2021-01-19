@@ -13,7 +13,7 @@ public class UDFtownvillageCheck extends UDF {
 
         JSONObject jsonObject = JSONObject.parseObject(json);
         //判断主字段是否为空
-        if (a == null || a.equals("")) {
+        if (a == null || a.equals("") || b == null || b.equals("")) {
             return null;
         }
 
