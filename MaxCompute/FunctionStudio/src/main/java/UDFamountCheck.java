@@ -3,7 +3,7 @@ import com.aliyun.odps.udf.UDF;
 import java.util.regex.Matcher;
 
 /**
- * 将有千分位逗号的清洗为无千分位，小数点后两位没有则默认填充0.001.
+ * 将有千分位逗号的清洗为无千分位，小数点后两位没有则默认填充0.00.
  * 小数点超过两位数的为校验失败
  * 中文或特殊符号也为校验失败
  * 小数点前超过11位数为校验失败
@@ -18,7 +18,7 @@ public class UDFamountCheck extends UDF {
 
         //如果存在中文，非千分位逗号，小数点的字符，输出到问题表
         if (!s.matches("[0-9.,]{1,}")) {
-            return "amt@" + s;
+            return "00@" + s;
         }
 
         //清洗字符串，只保留数字和小数点
@@ -27,12 +27,12 @@ public class UDFamountCheck extends UDF {
         String[] amounts = amount.split("\\.");
 
         if (amounts.length == 1) {
-            return amounts[0] + ".001";
+            return amounts[0] + ".00";
         }
 
         //判断整数位位数
         if (amounts[0].length() > 11 || amounts[1].length() > 2) {
-            return "amt@" + s;
+            return "00@" + s;
         }
         return String.format("%.2f", Double.parseDouble(amount));
     }
