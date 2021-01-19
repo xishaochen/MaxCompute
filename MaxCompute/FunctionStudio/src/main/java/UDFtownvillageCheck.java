@@ -34,10 +34,13 @@ public class UDFtownvillageCheck extends UDF {
             return "88@" + a;
         }
 
-        if (jsonObject.containsKey(a)) {//校验镇街和村社的关系
-            for (String s : jsonObject.getString(a).split(",")) {
-                if (s.equals(b)) {
-                    return "";
+        for (String s : towns) {
+            if (s.contains(a)) {
+                //校验镇街和村社的关系
+                for (String vill : jsonObject.getString(s).split(",")) {
+                    if (vill.contains(b)) {
+                        return "";
+                    }
                 }
             }
         }
