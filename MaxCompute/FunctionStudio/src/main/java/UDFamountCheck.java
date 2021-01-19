@@ -26,7 +26,7 @@ public class UDFamountCheck extends UDF {
 
         String[] amounts = amount.split("\\.");
 
-        if (amounts.length == 1) {
+        if (amounts.length == 1 && amounts[0].length() <= 11) {
             return amounts[0] + ".00";
         }
 
