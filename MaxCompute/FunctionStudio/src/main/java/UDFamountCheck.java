@@ -18,7 +18,7 @@ public class UDFamountCheck extends UDF {
 
         //如果存在中文，非千分位逗号，小数点的字符，输出到问题表
         if (!s.matches("[0-9.,]{1,}")) {
-            return "00@" + s;
+            return "@" + s;
         }
 
         //清洗字符串，只保留数字和小数点
@@ -32,7 +32,7 @@ public class UDFamountCheck extends UDF {
 
         //判断整数位位数
         if (amounts[0].length() > 11 || amounts[1].length() > 2) {
-            return "00@" + s;
+            return "@" + s;
         }
         return String.format("%.2f", Double.parseDouble(amount));
     }
