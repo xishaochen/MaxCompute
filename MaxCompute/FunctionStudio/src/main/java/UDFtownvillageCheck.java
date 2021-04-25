@@ -25,12 +25,9 @@ public class UDFtownvillageCheck extends UDF {
             }
             return "99@" + a;
         } else if (b.equals("cs")){ //校验村社
-            if (a.equals("天目村")) {
-                return "天目村";
-            }
 
             for (String s : villages) {
-                if (s.contains(a)) {
+                if (s.equals(a)) {
                     return s;
                 }
             }
@@ -38,10 +35,10 @@ public class UDFtownvillageCheck extends UDF {
         }
 
         for (String s : towns) {
-            if (s.contains(a)) {
+            if (s.equals(a)) {
                 //校验镇街和村社的关系
                 for (String vill : jsonObject.getString(s).split(",")) {
-                    if (vill.contains(b)) {
+                    if (vill.equals(b)) {
                         return "";
                     }
                 }
