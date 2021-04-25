@@ -1,6 +1,8 @@
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.odps.udf.UDF;
 
+import java.util.*;
+
 public class UDFtownvillageCheck extends UDF {
 
     // TODO define parameters and return type, e.g:  public String evaluate(String a, String b)
@@ -25,20 +27,26 @@ public class UDFtownvillageCheck extends UDF {
             }
             return "99@" + a;
         } else if (b.equals("cs")){ //校验村社
-
+            HashMap<String, Integer> hash = new HashMap<>();
             for (String s : villages) {
-                if (s.equals(a)) {
-                    return s;
+                if (s.contains(a)) {
+                    hash.put(s,s.length());
                 }
             }
-            return "88@" + a;
+            if (!hash.isEmpty()) {
+                List<Map.Entry<String,Integer>> list = new ArrayList(hash.entrySet());
+                Collections.sort(list, (o1, o2) -> (o1.getValue() - o2.getValue()));
+                return list.get(0).getKey();
+            } else {
+                return "88@" + a;
+            }
         }
 
         for (String s : towns) {
-            if (s.equals(a)) {
+            if (s.contains(a)) {
                 //校验镇街和村社的关系
                 for (String vill : jsonObject.getString(s).split(",")) {
-                    if (vill.equals(b)) {
+                    if (vill.contains(b)) {
                         return "";
                     }
                 }
