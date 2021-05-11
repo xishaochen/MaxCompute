@@ -1,6 +1,8 @@
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.odps.udf.UDF;
 
+import java.util.*;
+
 public class UDFtownvillageCheck extends UDF {
 
     // TODO define parameters and return type, e.g:  public String evaluate(String a, String b)
@@ -17,7 +19,6 @@ public class UDFtownvillageCheck extends UDF {
             return null;
         }
 
-
         if (b.equals("zj")) { //校验镇街
             for (String s : towns) {
                 if (s.contains(a)) {
@@ -26,12 +27,19 @@ public class UDFtownvillageCheck extends UDF {
             }
             return "99@" + a;
         } else if (b.equals("cs")){ //校验村社
+            HashMap<String, Integer> hash = new HashMap<>();
             for (String s : villages) {
                 if (s.contains(a)) {
-                    return s;
+                    hash.put(s,s.length());
                 }
             }
-            return "88@" + a;
+            if (!hash.isEmpty()) {
+                List<Map.Entry<String,Integer>> list = new ArrayList(hash.entrySet());
+                Collections.sort(list, (o1, o2) -> (o1.getValue() - o2.getValue()));
+                return list.get(0).getKey();
+            } else {
+                return "88@" + a;
+            }
         }
 
         for (String s : towns) {
