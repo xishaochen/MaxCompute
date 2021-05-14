@@ -22,7 +22,7 @@ public class UDFinfoMap extends UDF {
 
         // 判空，则返回原始map s1:s2
         if(i1==0 && i2== 0 ){
-            System.out.println('1');
+            System.out.println("12");
             return s1+":"+s2;
         }
 
