@@ -1,5 +1,10 @@
 import com.aliyun.odps.udf.UDF;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.regex.Pattern.*;
+
 
 /**
  * 字符串清洗
@@ -40,7 +45,7 @@ public class UDFstringClean extends UDF {
     public String evaluate(String s) {
 
         //处理空值
-        if (s == null || s.equals("")) {
+        if (s == null || "".equals(s)) {
             return null;
         }
 
@@ -62,12 +67,12 @@ public class UDFstringClean extends UDF {
         }
         String result = builder.toString();
 
-        //非datetime数据进行去空格
-        String sString="(\\d{2}|\\d{4})(?:-)?([0]{1}\\d{1}|[1]{1}[0-2]{1})(?:-)?([0-2]{1}\\d{1}|[3]{1}[0-1]{1})(?:\\s)?([0-1]{1}\\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\\d{1})(?::)?([0-5]{1}\\d{1}.0*)";
-        if (!result.matches(sString)) {
-            result = result.replaceAll(" ","");
-        }
-
+        //非datetime数据进行去空格，基于utf-8编码，去除汉字之间空格
+        Pattern pattern = compile("(?<=[\\x{4e00}-\\x{9fa5}])\\s(?=[\\x{4e00}-\\x{9fa5}])");
+        Matcher m = pattern.matcher(result);
+        result = m.replaceAll("").trim();
         return result.toUpperCase();
+
     }
+
 }
