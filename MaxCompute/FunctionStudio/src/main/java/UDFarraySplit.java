@@ -23,6 +23,7 @@ public class UDFarraySplit extends UDF {
         String[] arrays = set.toArray(new String[0]);
         //数组转化为字符串
         String s = Arrays.toString(arrays);
+        System.out.println("UDFarraySplit");
         return s.substring(1, s.length() - 1);
     }
 }
